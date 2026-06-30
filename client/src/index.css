@@ -1,0 +1,174 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Reset ─────────────────────────────────────────── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+/* ─── Base Theme ─────────────────────────────────────── */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #0A0A0F;
+  color: #F5F5F0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
+}
+
+body.light-mode {
+  background-color: #F5F5F0;
+  color: #0A0A0F;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────── */
+::-webkit-scrollbar        { width: 5px; }
+::-webkit-scrollbar-track  { background: #0A0A0F; }
+::-webkit-scrollbar-thumb  { background: #F5A623; border-radius: 10px; }
+
+/* ─── Noise texture overlay ─────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.35;
+}
+
+/* ─── Canvas ─────────────────────────────────────────── */
+canvas { display: block; outline: none; }
+
+/* ─── Utility classes ────────────────────────────────── */
+@layer utilities {
+
+  /* Gold gradient text */
+  .text-gold-gradient {
+    background: linear-gradient(135deg, #F5A623 0%, #FFD166 50%, #C47F17 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Display font */
+  .font-display { font-family: 'Bebas Neue', 'Poppins', sans-serif; }
+
+  /* Primary CTA — gold fill */
+  .btn-gold {
+    @apply relative px-8 py-3.5 bg-[#F5A623] text-[#0A0A0F] font-bold rounded-full
+      uppercase tracking-widest text-sm overflow-hidden
+      hover:bg-[#FFD166] transition-all duration-300
+      active:scale-95;
+  }
+
+  /* Outline button */
+  .btn-outline-gold {
+    @apply px-8 py-3.5 border border-[#F5A623] font-semibold text-[#F5A623] rounded-full
+      uppercase tracking-widest text-sm
+      hover:bg-[#F5A623] hover:text-[#0A0A0F] transition-all duration-300;
+  }
+
+  /* Generic primary button — gold to stay on-brand */
+  .btn-primary {
+    @apply w-full py-3 bg-[#F5A623] text-[#0A0A0F] font-semibold
+      rounded-xl hover:bg-[#FFD166]
+      transition-colors duration-200;
+  }
+
+  /* Section padding */
+  .section-padding { @apply px-4 py-20 md:px-8 lg:px-16; }
+
+  /* Dark card */
+  .dark-card {
+    @apply bg-[#12121A] border border-[#1E1E2E] rounded-none
+      hover:border-[#F5A623]/40 transition-all duration-300;
+  }
+
+  /* Light card */
+  .light-card {
+    @apply bg-white border border-[#E8E8E0]
+      hover:border-[#F5A623]/60 transition-all duration-300;
+  }
+
+  /* Glow */
+  .glow-gold    { box-shadow: 0 0 30px rgba(245,166,35,0.35), 0 0 60px rgba(245,166,35,0.15); }
+  .glow-gold-sm { box-shadow: 0 0 15px rgba(245,166,35,0.25); }
+
+  /* Corner accent brackets */
+  .corner-accent::after {
+    content: '';
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 40px; height: 40px;
+    border-bottom: 3px solid #F5A623;
+    border-right:  3px solid #F5A623;
+  }
+  .corner-accent::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 40px; height: 40px;
+    border-top:  3px solid #F5A623;
+    border-left: 3px solid #F5A623;
+  }
+
+  /* Giant BG text */
+  .bg-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(80px, 18vw, 220px);
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(245,166,35,0.08);
+    user-select: none;
+    pointer-events: none;
+  }
+
+  /* Glass morphism */
+  .glass-dark {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(10, 10, 15, 0.75);
+    border: 1px solid rgba(245,166,35,0.12);
+  }
+
+  /* Tag pill */
+  .tag-gold {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold uppercase tracking-widest
+      bg-[#F5A623]/10 text-[#F5A623] border border-[#F5A623]/20;
+  }
+}
+
+/* ─── Page wrapper ───────────────────────────────────── */
+.page-wrapper { min-height: 100vh; width: 100%; position: relative; z-index: 2; }
+
+/* ─── Diagonal divider ───────────────────────────────── */
+.diagonal-section {
+  clip-path: polygon(0 5%, 100% 0%, 100% 95%, 0% 100%);
+}
+
+/* ─── Animated underline ─────────────────────────────── */
+.underline-gold {
+  position: relative;
+  display: inline-block;
+}
+.underline-gold::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 0;
+  width: 0; height: 2px;
+  background: #F5A623;
+  transition: width 0.35s ease;
+}
+.underline-gold:hover::after { width: 100%; }
+
+/* ─── Light mode overrides ───────────────────────────── */
+body.light-mode .dark-card {
+  background: #ffffff;
+  border-color: #E8E8E0;
+}
+body.light-mode .glass-dark {
+  background: rgba(245,245,240,0.85);
+  border-color: rgba(245,166,35,0.2);
+}
