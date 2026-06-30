@@ -3,14 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { FiCreditCard, FiTruck, FiSmartphone } from 'react-icons/fi';
+import { FiTruck, FiSmartphone } from 'react-icons/fi';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 
 const PAYMENT_METHODS = [
   { id: 'COD', label: 'Cash on Delivery', icon: FiTruck, desc: 'Pay when your order arrives' },
   { id: 'UPI', label: 'UPI', icon: FiSmartphone, desc: 'Pay via UPI (GPay, PhonePe, Paytm)' },
-  { id: 'Razorpay', label: 'Online Payment', icon: FiCreditCard, desc: 'Cards, Net Banking, Wallets' },
 ];
 
 const Checkout = () => {
@@ -33,16 +32,6 @@ const Checkout = () => {
   const grandTotal = cartTotal + shipping;
 
   const handleChange = (e) => setAddress({ ...address, [e.target.name]: e.target.value });
-
-  const loadRazorpay = () => {
-    return new Promise((resolve) => {
-      const script = document.createElement('script');
-      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
-  };
 
   const placeOrder = async (e) => {
     e.preventDefault();
@@ -68,37 +57,10 @@ const Checkout = () => {
     };
 
     try {
-      if (paymentMethod === 'Razorpay') {
-        const ok = await loadRazorpay();
-        if (!ok) { toast.error('Razorpay failed to load'); setLoading(false); return; }
-
-        const { data } = await axios.post('/api/payment/create-order', { amount: grandTotal });
-        const options = {
-          key: data.key,
-          amount: grandTotal * 100,
-          currency: 'INR',
-          name: 'Abhay Cycle Shop',
-          description: 'Cycle Purchase',
-          order_id: data.order.id,
-          handler: async (response) => {
-            const orderRes = await axios.post('/api/orders', orderPayload);
-            await axios.post('/api/payment/verify', { ...response, orderId: orderRes.data.order._id });
-            clearCart();
-            toast.success('Payment successful! Order placed 🎉');
-            navigate('/order-success', { state: { order: orderRes.data.order } });
-          },
-          prefill: { name: address.fullName, contact: address.phone },
-          theme: { color: '#DC2626' },
-        };
-        const rzp = new window.Razorpay(options);
-        rzp.open();
-        setLoading(false);
-      } else {
-        const res = await axios.post('/api/orders', orderPayload);
-        clearCart();
-        toast.success('Order placed successfully! 🎉');
-        navigate('/order-success', { state: { order: res.data.order } });
-      }
+      const res = await axios.post('/api/orders', orderPayload);
+      clearCart();
+      toast.success('Order placed successfully! 🎉');
+      navigate('/order-success', { state: { order: res.data.order } });
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to place order');
       setLoading(false);

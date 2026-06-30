@@ -19,14 +19,15 @@ const app = express();
 // ── CORS — allows localhost in dev, Vercel domain in production ───────────────
 const allowedOrigins = [
   'http://localhost:3000',
-  process.env.CLIENT_URL, // set this to your Vercel URL on Render
+  process.env.CLIENT_URL,
 ].filter(Boolean);
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, Postman, curl)
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) return callback(null, true);
+    // Allow all vercel.app and onrender.com domains
+    if (origin.endsWith('.vercel.app') || origin.endsWith('.onrender.com')) return callback(null, true);
     callback(new Error(`CORS blocked: ${origin}`));
   },
   credentials: true,
